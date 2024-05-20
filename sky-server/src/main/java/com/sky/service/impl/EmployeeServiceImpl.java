@@ -84,12 +84,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setStatus(StatusConstant.ENABLE);
 
         //设置员工初始创建和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        //employee.setCreateTime(LocalDateTime.now());
+        //employee.setUpdateTime(LocalDateTime.now());
 
         //设置默认创建人和修改人id
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        //employee.setCreateUser(BaseContext.getCurrentId());
+        //employee.setUpdateUser(BaseContext.getCurrentId());
 
         ////后续步骤定义
         employeeMapper.insert(employee);
@@ -110,8 +110,49 @@ public class EmployeeServiceImpl implements EmployeeService {
         Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
 
         long total = page.getTotal();
-        List<Employee> records = page.getResult();
+        List<Employee> results = page.getResult();
 
-        return new PageResult(total,records);
+        return new PageResult(total,results);
     }
+
+
+    /**
+     * 修改员工状态
+     * @param status
+     * @param id
+     */
+    public void startOrStop(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .build();
+
+        employeeMapper.update(employee);
+    }
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     */
+    public void update(EmployeeDTO employeeDTO){
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO,employee);
+
+        //employee.setUpdateTime(LocalDateTime.now());
+        //employee.setUpdateUser(BaseContext.getCurrentId());
+
+        employeeMapper.update(employee);
+    }
+
 }
